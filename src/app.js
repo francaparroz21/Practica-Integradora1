@@ -5,7 +5,6 @@ import cartsRouter from "./routes/carts.router.js";
 import viewsRouter from "./routes/views.router.js"
 import __dirname from "./utils.js";
 import handlebars from "express-handlebars"
-import { Server } from "socket.io";
 
 //Create express app and their ports.
 const app = express();
@@ -17,7 +16,7 @@ app.set('views', __dirname + '/views')
 app.set('view engine', 'handlebars')
 
 //Listen '8080' ports.
-const server = app.listen(PORT, () => {
+app.listen(PORT, () => {
     console.log(`Server started on ${PORT} ports.`)
 })
 
@@ -30,7 +29,4 @@ app.use(express.static(__dirname + '/public'))
 app.use('/api/products', productsRouter)
 app.use('/api/carts', cartsRouter)
 app.use('/',viewsRouter)
-
-//Socket IO
-const socketServerIO = new Server(server)
 
