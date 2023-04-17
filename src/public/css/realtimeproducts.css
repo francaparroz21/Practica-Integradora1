@@ -1,0 +1,9 @@
+form{
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+    margin: auto;
+}
+h1,h2{
+    text-align: center;
+}
