@@ -13,8 +13,7 @@ router.get("/", async (req, res) => {
 
     if (!limit) return res.send({
         status: 'OK.',
-        products
-    })
+        products})
     else if (limit >= 0 && limit <= products.length) {
         const productLimited = products.slice(0, limit)
         return res.send({
@@ -65,14 +64,13 @@ router.post('/', async (req, res) => {
         error: `Code product '${product.code}' already created.`
     })
 
-
     products.push({ id: idProduct, status: true, ...product })
-
     await fs.promises.writeFile('./src/files/products.json', JSON.stringify(products, null, '\t'))
-
+    
+ 
     res.send({
         status: 'OK.',
-        product: { id: idProduct, thumbnails: [...req.files.thumbnails], status: true, ...product }
+        product: { id: idProduct, status: true, ...product }
     })
 })
 

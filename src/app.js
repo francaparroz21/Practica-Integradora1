@@ -12,10 +12,6 @@ import fs from 'fs'
 const app = express();
 const PORT = 8080;
 
-//Handlebars.
-app.engine('handlebars', handlebars.engine())
-app.set('views', __dirname + '/views')
-app.set('view engine', 'handlebars')
 
 //Listen '8080' ports.
 const appServer = app.listen(PORT, () => {
@@ -25,22 +21,24 @@ const appServer = app.listen(PORT, () => {
 //Server IO
 const socketServer = new Server(appServer)
 
-socketServer.on('connection',(socket) =>{
+socketServer.on('connection', (socket) => {
     console.log('Usuario encontrado', socket.id)
 
-    socket.on('disconnect',()=>{
+    socket.on('disconnect', () => {
         console.log('Usuario desconectado')
     })
 
-    socket.on('newProd', async ({title, description, category, price, thumbnails = "null", code, stock})=> {
-        const products = await fs.promises.readFile('./src/files/products.json', 'utf-8')
-        products.push({title, description, category, price, thumbnails: "null", code, stock})
+    socket.on('newProd', async ({ title, description, category, price, thumbnails = "null", code, stock }) => {
+        const products = JSON.parse(await fs.promises.readFile('./src/files/products.json', 'utf-8'))
+        products.push({ title, description, category, price, thumbnails: "null", code, stock })
         await fs.promises.writeFile('./src/files/products.json', JSON.stringify(products, null, "\t"))
-        socketServer.emit('addedProducts', products);
-      })
-
-
+        socketServer.emit('addedProducts', {products});
+    })
 })
+//Handlebars.
+app.engine('handlebars', handlebars.engine())
+app.set('views', __dirname + '/views')
+app.set('view engine', 'handlebars')
 
 //static(public directory), urlencoded & json.
 app.use(express.json());
@@ -50,5 +48,5 @@ app.use(express.static(__dirname + '/public'))
 //Routes 'products' & 'carts'.
 app.use('/api/products', productsRouter)
 app.use('/api/carts', cartsRouter)
-app.use('/',viewsRouter)
+app.use('/', viewsRouter)
 
