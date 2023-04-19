@@ -1,37 +1,37 @@
-<h1>Real Time Products</h1>
-<ul class="products-list">
-    {{#each products}}
-        <div class="products-item">
+<div class="container">
+    <h1>Real Time Products</h1>
+    <div id="products-list">
+        {{#each products}}
+        <div id={{this.id}} class="products-item">
             <h2>{{this.title}}</h2>
             <p>{{this.description}}</p>
             <span>{{this.price}}</span>
             {{#each this.thumbnails}}
-                <img class="thumbnail" src={{this}} alt="foto" srcset="">
+            <img class="thumbnail" src={{this}} alt="foto" srcset="">
             {{/each}}
+            <button class='delete-button btn btn-danger' onclick="deleteProduct({{this.id}})" id={{this.id}}> -
+            </button>
         </div>
-    {{/each}}
-</ul>
-<hr>
+        {{/each}}
+    </div>
+    <hr>
 
-<h2>Create a product</h2>
-
-<form class="post-product" action="/api/products" method="post">
-            <label>Nombre</label>
-            <input type="text" name="title">
-            <label>Descripcion</label>
-            <input type="text" name="description">
-            <label>Precio</label>
-            <input type="number" name="price">
-            <label>Codigo</label>
-            <input type="text" name="code">
-            <label>Stock</label>
-            <input type="number" name="stock" min="1" max="100">
-            <label>Categoria</label>
-            <input type="text" name="category">
-            <label>Imagenes</label>
-            <input type="file" name="thumbnails" multiple >
-            <button type="submit">Enviar</button>
-        </form>
-
+    <h2>Create a product</h2>
+    <form id="post-product" action="/api/products" method="post">
+        <label>Nombre</label>
+        <input id="title-product" type="text" name="title">
+        <label>Descripcion</label>
+        <input id="description-product" type="text" name="description">
+        <label>Precio</label>
+        <input id="price-product" type="number" name="price">
+        <label>Codigo</label>
+        <input id="code-product" type="text" name="code">
+        <label>Stock</label>
+        <input id="stock-product" type="number" name="stock" min="1" max="100">
+        <label>Categoria</label>
+        <input id="category-product" type="text" name="category">
+        <input id="post-product" type="submit" value="Enviar">
+    </form>
+</div>
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/realtimeproducts.js"></script>

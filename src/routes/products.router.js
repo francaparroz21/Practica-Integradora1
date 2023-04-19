@@ -2,6 +2,7 @@
 import { Router } from "express";
 import fs from "fs"
 import { uploaderThumbnails } from "../utils.js";
+import { socketServer } from "../app.js";
 
 //Create router
 const router = Router();
@@ -46,7 +47,7 @@ router.get('/:pid', async (req, res) => {
 })
 
 //Post product.
-router.post('/', uploaderThumbnails.array('thumbnails'), async (req, res) => {
+router.post('/', async (req, res) => {
     let products = JSON.parse(await fs.promises.readFile('./src/files/products.json', 'utf-8'))
     let product = req.body
     let idProduct = products[products.length - 1].id + 1
@@ -65,23 +66,10 @@ router.post('/', uploaderThumbnails.array('thumbnails'), async (req, res) => {
         error: `Code product '${product.code}' already created.`
     })
 
-
-    console.log(req.file)
-    const thumbnails = []
-    if (req.files.length > 0) {
-        for (let index = 0; index < req.files.length; index++) {
-            req.files.thumbnails.push("http://localhost:8080/images/" + req.files[index].filename)
-        }
-    }
-
-    products.push({ id: idProduct, thumbnails: [...thumbnails], status: true, ...product })
-
+    products.push({ id: idProduct, status: true, ...product })
     await fs.promises.writeFile('./src/files/products.json', JSON.stringify(products, null, '\t'))
-
-    res.send({
-        status: 'OK.',
-        product: { id: idProduct, thumbnails: [...thumbnails], status: true, ...product }
-    })
+    socketServer.emit('updateProducts', { products })
+    res.redirect('../../realtimeproducts')
 })
 
 
@@ -114,6 +102,7 @@ router.put('/:pid', async (req, res) => {
 
 //Delete product by ID.
 router.delete('/:pid', async (req, res) => {
+    console.log("entra aca")
     let idParams = req.params.pid
     let products = JSON.parse(await fs.promises.readFile('./src/files/products.json', 'utf-8'))
     let product = products.find(product => product.id === parseInt(idParams))
@@ -125,13 +114,9 @@ router.delete('/:pid', async (req, res) => {
 
 
     products.splice(products.indexOf(product), 1)
-
     await fs.promises.writeFile('./src/files/products.json', JSON.stringify(products, null, '\t'))
-
-    res.send({
-        status: "OK.",
-        productDeleted: product
-    })
+    socketServer.emit('updateProducts', { products })
+    res.redirect('../../realtimeproducts')
 })
 
 

@@ -4,6 +4,9 @@ form{
     width: 500px;
     margin: auto;
 }
+
+#products-list{display: flex;}
+
 h1,h2{
     text-align: center;
 }

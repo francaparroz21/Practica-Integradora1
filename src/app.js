@@ -6,15 +6,12 @@ import viewsRouter from "./routes/views.router.js"
 import __dirname from "./utils.js";
 import handlebars from "express-handlebars"
 import { Server } from "socket.io";
+import fs from 'fs'
 
 //Create express app and their ports.
 const app = express();
 const PORT = 8080;
 
-//Handlebars.
-app.engine('handlebars', handlebars.engine())
-app.set('views', __dirname + '/views')
-app.set('view engine', 'handlebars')
 
 //Listen '8080' ports.
 const appServer = app.listen(PORT, () => {
@@ -22,7 +19,20 @@ const appServer = app.listen(PORT, () => {
 })
 
 //Server IO
-const socketServer = new Server(appServer)
+export const socketServer = new Server(appServer)
+
+socketServer.on('connection', (socket) => {
+    console.log('Usuario encontrado', socket.id)
+
+    socket.on('disconnect', () => {
+        console.log('Usuario desconectado')
+    })
+
+})
+//Handlebars.
+app.engine('handlebars', handlebars.engine())
+app.set('views', __dirname + '/views')
+app.set('view engine', 'handlebars')
 
 //static(public directory), urlencoded & json.
 app.use(express.json());
@@ -32,5 +42,5 @@ app.use(express.static(__dirname + '/public'))
 //Routes 'products' & 'carts'.
 app.use('/api/products', productsRouter)
 app.use('/api/carts', cartsRouter)
-app.use('/',viewsRouter)
+app.use('/', viewsRouter)
 
