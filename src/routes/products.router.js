@@ -2,6 +2,7 @@
 import { Router } from "express";
 import fs from "fs"
 import { uploaderThumbnails } from "../utils.js";
+import { socketServer } from "../app.js";
 
 //Create router
 const router = Router();
@@ -13,7 +14,8 @@ router.get("/", async (req, res) => {
 
     if (!limit) return res.send({
         status: 'OK.',
-        products})
+        products
+    })
     else if (limit >= 0 && limit <= products.length) {
         const productLimited = products.slice(0, limit)
         return res.send({
@@ -66,12 +68,8 @@ router.post('/', async (req, res) => {
 
     products.push({ id: idProduct, status: true, ...product })
     await fs.promises.writeFile('./src/files/products.json', JSON.stringify(products, null, '\t'))
-    
- 
-    res.send({
-        status: 'OK.',
-        product: { id: idProduct, status: true, ...product }
-    })
+    socketServer.emit('updateProducts', { products })
+    res.redirect('../../realtimeproducts')
 })
 
 
@@ -104,6 +102,7 @@ router.put('/:pid', async (req, res) => {
 
 //Delete product by ID.
 router.delete('/:pid', async (req, res) => {
+    console.log("entra aca")
     let idParams = req.params.pid
     let products = JSON.parse(await fs.promises.readFile('./src/files/products.json', 'utf-8'))
     let product = products.find(product => product.id === parseInt(idParams))
@@ -115,13 +114,9 @@ router.delete('/:pid', async (req, res) => {
 
 
     products.splice(products.indexOf(product), 1)
-
     await fs.promises.writeFile('./src/files/products.json', JSON.stringify(products, null, '\t'))
-
-    res.send({
-        status: "OK.",
-        productDeleted: product
-    })
+    socketServer.emit('updateProducts', { products })
+    res.redirect('../../realtimeproducts')
 })
 
 
