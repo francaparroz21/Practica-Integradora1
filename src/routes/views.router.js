@@ -15,8 +15,9 @@ router.get('/realtimeproducts', async (req, res) => {
     const products = JSON.parse(await fs.promises.readFile('./src/files/products.json', 'utf-8'))
     res.render('realTimeProducts', {
         products,
-        styles: ['/css/home.css','/css/realtimeproducts.css']
+        styles: ['/css/home.css', '/css/realtimeproducts.css']
     })
 })
+
 
 export default router;

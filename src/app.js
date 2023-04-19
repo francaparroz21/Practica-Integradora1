@@ -6,6 +6,7 @@ import viewsRouter from "./routes/views.router.js"
 import __dirname from "./utils.js";
 import handlebars from "express-handlebars"
 import { Server } from "socket.io";
+import fs from 'fs'
 
 //Create express app and their ports.
 const app = express();
@@ -23,6 +24,23 @@ const appServer = app.listen(PORT, () => {
 
 //Server IO
 const socketServer = new Server(appServer)
+
+socketServer.on('connection',(socket) =>{
+    console.log('Usuario encontrado', socket.id)
+
+    socket.on('disconnect',()=>{
+        console.log('Usuario desconectado')
+    })
+
+    socket.on('newProd', async ({title, description, category, price, thumbnails = "null", code, stock})=> {
+        const products = await fs.promises.readFile('./src/files/products.json', 'utf-8')
+        products.push({title, description, category, price, thumbnails: "null", code, stock})
+        await fs.promises.writeFile('./src/files/products.json', JSON.stringify(products, null, "\t"))
+        socketServer.emit('addedProducts', products);
+      })
+
+
+})
 
 //static(public directory), urlencoded & json.
 app.use(express.json());

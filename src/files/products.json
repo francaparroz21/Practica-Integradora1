@@ -54,5 +54,65 @@
 		"code": "1S",
 		"stock": 5,
 		"category": "cosmetic"
+	},
+	{
+		"id": 5,
+		"status": true,
+		"title": "asd",
+		"description": "asddd",
+		"price": "233",
+		"code": "1aaaa",
+		"stock": "4",
+		"category": "reggaeton"
+	},
+	{
+		"id": 6,
+		"status": true,
+		"title": "asd",
+		"description": "asddd",
+		"price": "233",
+		"code": "1aaaaasddddd",
+		"stock": "4",
+		"category": "reggaeton"
+	},
+	{
+		"id": 7,
+		"status": true,
+		"title": "asd",
+		"description": "asddd",
+		"price": "233",
+		"code": "1aaaaasdddddasdddasdasdas",
+		"stock": "4",
+		"category": "reggaeton"
+	},
+	{
+		"id": 8,
+		"status": true,
+		"title": "asd2",
+		"description": "para pintar los labios",
+		"price": "21333",
+		"code": "1asfafa",
+		"stock": "2",
+		"category": "caca"
+	},
+	{
+		"id": 9,
+		"status": true,
+		"title": "asd",
+		"description": "asdd",
+		"price": "1123",
+		"code": "1aass",
+		"stock": "23",
+		"category": "2asd"
+	},
+	{
+		"id": 10,
+		"status": true,
+		"title": "asddsd",
+		"description": "asdsdd",
+		"price": "231331",
+		"code": "asd1wdaseasd",
+		"stock": "2",
+		"category": "nose"
 	}
 ]
