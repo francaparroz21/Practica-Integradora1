@@ -7,11 +7,10 @@ import __dirname from "./utils.js";
 import handlebars from "express-handlebars"
 import { Server } from "socket.io";
 import fs from 'fs'
+import { PORT } from "./utils.js";
 
 //Create express app and their ports.
 const app = express();
-const PORT = 8080;
-
 
 //Listen '8080' ports.
 const appServer = app.listen(PORT, () => {
