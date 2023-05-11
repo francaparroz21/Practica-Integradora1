@@ -14,9 +14,8 @@ emailForm.addEventListener("submit", (event) => {
     
     const email = inputEmail.value
 
-    if(email.trim().length <= 0) {
-        emailError.style.display = "flex"
-        emailError.innerHTML = `<i class="ph-warning-circle-bold"></i> Please type something`
+    if(email.length <= 0) {
+        email.style.visibility = visible
     }
     else{
         emailError.style.display = "none"
@@ -25,8 +24,6 @@ emailForm.addEventListener("submit", (event) => {
         emailFormContainer.style.display = "none"
         
         socket.emit("email", email)
-
-        inputMessage.focus()
     }
 })
 
