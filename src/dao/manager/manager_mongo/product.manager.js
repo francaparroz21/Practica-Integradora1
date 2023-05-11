@@ -1,85 +1,105 @@
+import { productModel } from "../../models/products.model.js"
 
-
-export class CartManager{
-
-    async getCarts(){
+export class ProductManager{
+    async getProducts(){
         try{
-            const response = await cartModel.find()
+            const response = await productModel.find()
             
-            if(!response.length) throw new CustomError({ status: 404, ok: false, response: "No carts."})
-
-            const mapped = response.map(x => ({ id: x._id, products: x.products }))
-
-            return { status: 200, ok: true, response: mapped }
+            if(!response.length) return{ status: 404, response: "No products." }
+            
+            const products = response.map(product => (
+                {
+                    id: product.id,
+                    title: product.title,
+                    description: product.description,
+                    category: product.category,
+                    thumbnails: product.thumbnails,
+                    stock: product.stock,
+                    price: product.price,
+                    code: product.code,
+                    status: product.status
+                }
+            ))
+            
+            return { status: 200, response: products }
         }catch(error){
-            throw new CustomError(error)
+            console.log(`error: ${error}`)
         }
     }
 
-    async getCartById(id){
+    async getProductById(id){
         try{
-            const cartFound = await cartModel.find({ _id: id })
-            
-            if(!cartFound || !cartFound.length) throw new CustomError({ status: 404, ok: false, response: "Cart not found" })
+            const product = await productModel.findById(id)
 
-            const mapped = cartFound.map(x => ({ id: x._id, products: x.products }))
+            if(!product) return { status: 404, response: "Product not found." }
 
-            return { status: 200, ok: true, response: mapped }
+            return { status: 200, response: product }
         }catch(error){
-            throw new CustomError(error)
+            console.log(`error: ${error}`)
         }
     }
 
-    async createCart(){
+    async createProduct({ title, description, category, thumbnails, stock, price, code, status }){
+        const product = { title, description, category, thumbnails, stock, price, code, status }
+
+        if(!title || !description || !category || !thumbnails || !code) return { status: 400, response: "Bad request." }
+
         try{
-            const response = await cartModel.create({ products: []})
-        
-            return { status: 201, ok: true, response: "Cart created." }
+            const productRepeated = await productModel.find({ code: code })
+
+            if(productRepeated) return { status: 400, response: "Product already exists." }
+
+            await productModel.create(product)
+
+            return { status: 200, response: "Product created." }
         }catch(error){
-            throw new CustomError(error)
-        } 
-    }
-
-    async addProductToCart(cartId, productId){
-        try{
-            const cartFound = await cartModel.find({ _id: cartId})
-
-            if(!cartFound || !cartFound.length) throw new CustomError({ status: 404, ok: false, response: "Cart not found." })
-
-            const productFound = await productModel.find({ _id: productId })
-            
-            if(!productFound || !productFound.length) throw new CustomError({ status: 404, ok: false, response: "The product that you are trying to add doesn't exist." })
-            
-            const cartProducts = cartFound[0].products
-
-            const productRepeated = cartProducts.find(x => x.id === productId)
-            let updatedProducts
-
-            if(!productRepeated) updatedProducts = [...cartProducts, { id: productId, quantity: 1}]
-            if(productRepeated) updatedProducts = cartProducts.map(x => x.id === productId ? {...x, quantity: x.quantity + 1} : x)
-
-            const updatedCart = {...cartFound, products: updatedProducts}
-
-            await cartModel.updateOne({ _id: cartId}, updatedCart)
-
-            return { status: 201, ok: true, response: "Product added to cart." }
-        }catch(error){
-            console.log(error)
-            throw new CustomError(error)
+            console.log(`error: ${error}`)
         }
     }
 
-    async deleteCart(id){
+    async updateProduct(id, { title, description, category, thumbnails, stock, price, code, status }){
         try{
-            const cartFound = await cartModel.find({ _id: id })
+            const updateProduct = { title, description, category, thumbnails, stock, price, code, status }
+            const productFound = await productModel.findById(id)
+            
+            if(!productFound) return { status: 404, response: "Product not found." }
+            
+            const productData = productFound._doc
 
-            if(!cartFound || !cartFound.length) throw new CustomError({ status: 404, ok: false, response: "Cart not found." })
+            const updatedProduct = {
+                ...productData,
+                ...updateProduct
+            }
+            await productModel.updateOne({ _id: id }, updatedProduct)
 
-            await cartModel.deleteOne({ _id: id })
-
-            return { status: 200, ok: true, response: "Cart deleted." }
+            return { status: 200, response: "Product updated." }
         }catch(error){
-            throw new CustomError(error)
+            console.log(`error: ${error}`)
+        }
+    }
+
+
+    async deleteProduct(id){
+        try{
+            const productFound = await productModel.findById(id)
+
+            if(!productFound) return { status: 404, ok: false, response: "Product not found." }
+
+            await productModel.deleteOne({ _id: id })
+
+            return { status: 200, response: "Product deleted." }
+        }catch(error){
+            console.log(`error: ${error}`)
+        }
+    }
+
+    async deleteAllProducts(){
+        try{
+            await productModel.deleteMany()
+
+            return { status: 200, response: "All products removed." }
+        }catch(error){
+            console.log(`error: ${error}`)
         }
     }
 }

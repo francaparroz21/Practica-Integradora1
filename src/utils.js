@@ -1,6 +1,7 @@
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import multer from 'multer';
+import { config } from '';
 
 
 export const PORT = 8080;

@@ -1,0 +1,24 @@
+<div class="container">
+    <section id="messages">
+    </section>
+</div>
+
+<section id="container-email-form">
+    <form id="email-form">
+        <input type="email" placeholder="youremail@gmail.com" id="input-email"/>
+        <span id="error-email"></span>
+        <button type="submit">Chat now</button>
+    </form>
+</section>
+
+<div class="chat-container">
+    <form id="message-form">
+        <input type="text" placeholder="Hello Francisco..." id="input-message"/>
+        <button type="submit" id="send-message-button">
+            <i class="ph-paper-plane-right-fill"></i>
+        </button>
+    <form/>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/chat.js" type="module"></script>
